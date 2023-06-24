@@ -15,21 +15,25 @@ class _HomePageState extends State<HomePage> {
   @override
 
   void initState() {
-    // TODO: implement initState
+    // adwadadawdawdTODO: implement initState
     super.initState();
     loadData();
   }
 
   loadData()async{
+    await Future.delayed(Duration(seconds: 2));
     final catalogJason =
     await rootBundle.loadString("assets/files/catalog.json");
     final decodeData = jsonDecode(catalogJason);
     var productData = decodeData["products"];
-    print(productData);
-
+    //print(productData);
+    CatalogModels.item = List.from(productData)
+        .map<Item>((item) => Item.fromMap(item))
+    .toList();
+    setState(() {});
   }
   Widget build(BuildContext context) {
-    final dummylist = List.generate(20, (index) => CatalogModels.item[0]);
+    //final dummylist = List.generate(20, (index) => CatalogModels.item[0]);
     return Scaffold(
       appBar: AppBar(
         title: Center(
@@ -38,14 +42,19 @@ class _HomePageState extends State<HomePage> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: ListView.builder(
-          itemCount: dummylist.length,
+        child: (CatalogModels.item!=null) ? ListView.builder(
+          scrollDirection: Axis.vertical,
+          shrinkWrap: true,
+          itemCount: CatalogModels.item?.length,
           itemBuilder: (context, index) {
             return ItemWidget(
-              item: dummylist[index],
+              item: CatalogModels.item![index],
             );
           },
-        ),
+        ):
+            Center(
+              child: CircularProgressIndicator(),
+            )
       ),
       drawer: MyDrawer(),
   );
